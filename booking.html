@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .back-arrow {
+            
+            font-size: 20px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .header h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Spot Summary Card */
+        .spot-card {
+            background-color: white;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .spot-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .spot-address {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .time-slot {
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #2c5aa0;
+            font-weight: 500;
+        }
+
+        /* Time Selection */
+        .section {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .time-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .time-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .time-label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .time-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .time-value {
+            font-weight: 500;
+        }
+
+        .time-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .time-btn {
+            background-color: #f0f0f0;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .duration-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .duration-option {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .duration-option.selected {
+            background-color: #2c5aa0;
+            color: white;
+            border-color: #2c5aa0;
+        }
+
+        /* Price Calculation */
+        .price-calculation {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .price-label {
+            color: #666;
+        }
+
+        .total-row {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 5px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .total-amount {
+            font-weight: 700;
+            color: #2c5aa0;
+        }
+
+        /* Coupon Input */
+        .coupon-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .coupon-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .apply-btn {
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .coupon-applied {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Payment Method */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-option.selected {
+            border-color: #2c5aa0;
+            background-color: #f0f8ff;
+        }
+
+        .payment-radio {
+            margin-right: 10px;
+            accent-color: #2c5aa0;
+        }
+
+        .payment-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .payment-label {
+            font-weight: 500;
+        }
+
+        /* Terms and Conditions */
+        .terms {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            gap: 10px;
+        }
+
+        .terms-checkbox {
+            accent-color: #2c5aa0;
+        }
+
+        .terms-text {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .terms-link {
+            color: #2c5aa0;
+            text-decoration: none;
+        }
+
+        /* Pay Button */
+        .pay-button {
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .pay-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .pay-btn:not(:disabled):hover {
+            background-color: #1e3d6f;
+        }
+
+        /* Confirmation Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            width: 90%;
+        }
+
+        .modal-icon {
+            font-size: 50px;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .modal-message {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .modal-btn {
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .spot-card {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            .section {
+                padding: 10px;
+            }
+            
+            .duration-options {
+                justify-content: space-between;
+            }
+            
+            .duration-option {
+                flex: 1;
+                text-align: center;
+                min-width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-arrow">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <!--<div class="back-arrow">←</div>-->
+            <h1>Confirm Booking</h1>
+        </div>
+
+        <!-- Spot Summary Card -->
+        <div class="spot-card">
+            <div class="spot-name">Cafe Aura</div>
+            <div class="spot-address">123 Main St</div>
+            <div class="time-slot" id="selected-time-slot">Today, 2:00 PM - 2:30 PM</div>
+        </div>
+
+        <!-- Time Selection -->
+        <div class="section">
+            <div class="section-title">Select Time</div>
+            <div class="time-selection">
+                <div class="time-picker">
+                    <div class="time-label">Start Time</div>
+                    <div class="time-display">
+                        <div class="time-value" id="start-time">2:00 PM</div>
+                        <div class="time-controls">
+                            <button class="time-btn" id="time-decrease">-</button>
+                            <button class="time-btn" id="time-increase">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="duration-selector">
+                    <div class="time-label">Duration</div>
+                    <div class="duration-options">
+                        <div class="duration-option selected" data-minutes="30">30 min</div>
+                        <div class="duration-option" data-minutes="45">45 min</div>
+                        <div class="duration-option" data-minutes="60">1 hr</div>
+                        <div class="duration-option" data-minutes="90">1.5 hr</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Calculation -->
+        <div class="section">
+            <div class="section-title">Price Details</div>
+            <div class="price-calculation">
+                <div class="price-row">
+                    <span class="price-label">Base Price:</span>
+                    <span id="base-price">₹150.00</span>
+                </div>
+                <div class="price-row">
+                    <span class="price-label">Tax/Fees:</span>
+                    <span id="tax-fees">₹18.00</span>
+                </div>
+                <div class="price-row">
+                    <span class="price-label">Subtotal:</span>
+                    <span id="subtotal">₹168.00</span>
+                </div>
+                <div class="price-row" id="coupon-row" style="display: none;">
+                    <span class="price-label">Coupon Applied:</span>
+                    <span id="coupon-discount" style="color: #28a745;">-₹0.00</span>
+                </div>
+                <div class="price-row total-row">
+                    <span>Total Payable:</span>
+                    <span class="total-amount" id="total-payable">₹168.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupon Input -->
+        <div class="section">
+            <div class="section-title">Apply Coupon</div>
+            <div class="coupon-section">
+                <input type="text" class="coupon-input" id="coupon-code" placeholder="Enter coupon code">
+                <button class="apply-btn" id="apply-coupon">Apply</button>
+            </div>
+            <div class="coupon-applied" id="coupon-message">Coupon applied successfully!</div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="section">
+            <div class="section-title">Choose Payment Method</div>
+            <div class="payment-options">
+                <label class="payment-option selected">
+                    <input type="radio" name="payment" class="payment-radio" value="upi" checked>
+                    <span class="payment-icon">💳</span>
+                    <span class="payment-label">UPI</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" class="payment-radio" value="wallet">
+                    <span class="payment-icon">👛</span>
+                    <span class="payment-label">Wallet (Paytm, GPay)</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" class="payment-radio" value="card">
+                    <span class="payment-icon">💳</span>
+                    <span class="payment-label">Credit/Debit Card</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" class="payment-radio" value="new-card">
+                    <span class="payment-icon">+</span>
+                    <span class="payment-label">Add New Card</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="terms">
+            <input type="checkbox" id="terms-checkbox" class="terms-checkbox">
+            <div class="terms-text">
+                I agree to the <a href="#" class="terms-link">Terms and Conditions</a>
+            </div>
+        </div>
+
+        <!-- Pay Button -->
+        <div class="pay-button">
+            <button class="pay-btn" id="pay-button" disabled>Pay & Confirm</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <div class="modal-title">Booking Confirmed!</div>
+            <div class="modal-message">Your booking at Cafe Aura has been successfully confirmed.</div>
+            <button class="modal-btn" id="modal-ok">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const startTimeElement = document.getElementById('start-time');
+        const timeDecreaseBtn = document.getElementById('time-decrease');
+        const timeIncreaseBtn = document.getElementById('time-increase');
+        const durationOptions = document.querySelectorAll('.duration-option');
+        const selectedTimeSlotElement = document.getElementById('selected-time-slot');
+        const basePriceElement = document.getElementById('base-price');
+        const taxFeesElement = document.getElementById('tax-fees');
+        const subtotalElement = document.getElementById('subtotal');
+        const couponDiscountElement = document.getElementById('coupon-discount');
+        const totalPayableElement = document.getElementById('total-payable');
+        const couponRow = document.getElementById('coupon-row');
+        const couponCodeInput = document.getElementById('coupon-code');
+        const applyCouponBtn = document.getElementById('apply-coupon');
+        const couponMessage = document.getElementById('coupon-message');
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        const termsCheckbox = document.getElementById('terms-checkbox');
+        const payButton = document.getElementById('pay-button');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const modalOkBtn = document.getElementById('modal-ok');
+        const backArrow = document.querySelector('.back-arrow');
+            backArrow.addEventListener('click', function() {
+               // alert('Navigating back to previous screen');
+                // In a real app, this would use history.back() or router navigation
+                window.location.href="chargingspot.html"
+            })
+
+        // Initial state
+        let currentTime = 14 * 60; // 2:00 PM in minutes (14 * 60)
+        let selectedDuration = 30; // minutes
+        let basePrice = 150;
+        let taxRate = 0.12; // 12%
+        let couponDiscount = 0;
+        let appliedCoupon = null;
+
+        // Available coupons
+        const coupons = {
+            'WELCOME10': 0.1, // 10% discount
+            'SAVE20': 0.2,    // 20% discount
+            'FIRST5': 0.05    // 5% discount
+        };
+
+        // Format time to 12-hour format with AM/PM
+        function formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            return `${displayHours}:${mins.toString().padStart(2, '0')} ${period}`;
+        }
+
+        // Calculate end time
+        function calculateEndTime(startTime, duration) {
+            return startTime + duration;
+        }
+
+        // Update time slot display
+        function updateTimeSlot() {
+            const startTimeFormatted = formatTime(currentTime);
+            const endTimeFormatted = formatTime(calculateEndTime(currentTime, selectedDuration));
+            selectedTimeSlotElement.textContent = `Today, ${startTimeFormatted} - ${endTimeFormatted}`;
+            startTimeElement.textContent = startTimeFormatted;
+        }
+
+        // Update prices
+        function updatePrices() {
+            const taxAmount = basePrice * taxRate;
+            const subtotal = basePrice + taxAmount;
+            const total = subtotal - couponDiscount;
+            
+            basePriceElement.textContent = `₹${basePrice.toFixed(2)}`;
+            taxFeesElement.textContent = `₹${taxAmount.toFixed(2)}`;
+            subtotalElement.textContent = `₹${subtotal.toFixed(2)}`;
+            couponDiscountElement.textContent = `-₹${couponDiscount.toFixed(2)}`;
+            totalPayableElement.textContent = `₹${total.toFixed(2)}`;
+        }
+
+        // Update base price based on duration
+        function updateBasePrice() {
+            // Price per 15 minutes
+            const pricePer15Min = 75;
+            basePrice = (selectedDuration / 15) * pricePer15Min;
+            updatePrices();
+        }
+
+        // Apply coupon
+        function applyCoupon(code) {
+            if (coupons[code]) {
+                const discountRate = coupons[code];
+                const subtotal = basePrice + (basePrice * taxRate);
+                couponDiscount = subtotal * discountRate;
+                appliedCoupon = code;
+                couponRow.style.display = 'flex';
+                couponMessage.style.display = 'block';
+                updatePrices();
+                return true;
+            } else {
+                couponMessage.textContent = 'Invalid coupon code';
+                couponMessage.style.color = '#dc3545';
+                couponMessage.style.display = 'block';
+                setTimeout(() => {
+                    couponMessage.style.display = 'none';
+                }, 3000);
+                return false;
+            }
+        }
+
+        // Event Listeners
+        timeDecreaseBtn.addEventListener('click', () => {
+            if (currentTime > 9 * 60) { // Can't go before 9 AM
+                currentTime -= 15;
+                updateTimeSlot();
+            }
+        });
+
+        timeIncreaseBtn.addEventListener('click', () => {
+            if (currentTime < 21 * 60) { // Can't go after 9 PM
+                currentTime += 15;
+                updateTimeSlot();
+            }
+        });
+
+        durationOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                durationOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedDuration = parseInt(option.getAttribute('data-minutes'));
+                updateBasePrice();
+                updateTimeSlot();
+            });
+        });
+
+        applyCouponBtn.addEventListener('click', () => {
+            const code = couponCodeInput.value.trim().toUpperCase();
+            if (code) {
+                applyCoupon(code);
+            }
+        });
+
+        couponCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                applyCouponBtn.click();
+            }
+        });
+
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                option.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        termsCheckbox.addEventListener('change', () => {
+            payButton.disabled = !termsCheckbox.checked;
+        });
+
+        payButton.addEventListener('click', () => {
+            confirmationModal.style.display = 'flex';
+        });
+
+        modalOkBtn.addEventListener('click', () => {
+           // confirmationModal.style.display = 'none';
+           window.location.href="active.html"
+        });
+
+        // Initialize
+        updateTimeSlot();
+        updatePrices();
+    </script>
+</body>
+</html>
