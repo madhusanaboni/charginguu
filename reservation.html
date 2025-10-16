@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charging Session - Cafe Aura</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .back-arrow {
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .back-arrow:hover {
+            transform: translateX(-5px);
+        }
+
+        .header h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Spot Name */
+        .spot-name {
+            text-align: center;
+            padding: 25px 20px 10px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* Charging Status */
+        .charging-status {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .battery-container {
+            width: 180px;
+            height: 80px;
+            border: 4px solid #2c3e50;
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .battery-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, #4CAF50, #8BC34A);
+            transition: height 2s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .battery-cap {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 12px;
+            background: #2c3e50;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .lightning-bolt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            color: rgba(255, 255, 255, 0.8);
+            z-index: 2;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* Session Info */
+        .session-info {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background-color: #f8f9fa;
+            margin: 0 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .cost-value {
+            color: #27ae60;
+        }
+
+        /* Instructions */
+        .instructions {
+            background-color: #e8f4fd;
+            margin: 25px 20px;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        /* End Session Button */
+        .end-session-container {
+            padding: 20px;
+        }
+
+        .btn-end {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-end:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-end:active {
+            transform: translateY(1px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .modal p {
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-confirm:hover, .btn-cancel:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .spot-name {
+                font-size: 24px;
+            }
+            
+            .info-value {
+                font-size: 20px;
+            }
+            
+            .session-info {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .battery-container {
+                width: 150px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-arrow"><i class="fas fa-arrow-left"></i></div>
+            <h1>Charging Session</h1>
+        </div>
+
+        <!-- Spot Name -->
+        <div class="spot-name">Cafe Aura</div>
+
+        <!-- Charging Status -->
+        <div class="charging-status">
+            <div class="battery-container">
+                <div class="battery-cap"></div>
+                <div class="battery-level" id="battery-level"></div>
+                <div class="lightning-bolt"><i class="fas fa-bolt"></i></div>
+            </div>
+            <p>Charging in progress...</p>
+        </div>
+
+        <!-- Session Info -->
+        <div class="session-info">
+            <div class="info-box">
+                <div class="info-label">Session Duration</div>
+                <div class="info-value" id="session-timer">00:05:20</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Current Cost</div>
+                <div class="info-value cost-value" id="current-cost">₹26.67</div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Important Reminders</h3>
+            <ul>
+                <li>Ensure your device is securely connected</li>
+                <li>Do not unplug without ending session</li>
+                <li>Charging rate: ₹5.00 per minute</li>
+                <li>Session will auto-end when device is fully charged</li>
+            </ul>
+        </div>
+
+        <!-- End Session Button -->
+        <div class="end-session-container">
+            <button class="btn-end" id="end-session-btn">
+                <i class="fas fa-power-off"></i> End Session
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <h2>End Charging Session?</h2>
+            <p>Are you sure you want to end your session? Any outstanding balance will be charged to your account.</p>
+            <div class="modal-buttons">
+                <button class="btn-cancel" id="dismiss-modal">Continue Charging</button>
+                <button class="btn-confirm" id="confirm-end">End Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Session variables
+        let sessionSeconds = 320; // 5 minutes 20 seconds in seconds
+        let costPerSecond = 5 / 60; // ₹5 per minute
+        let totalCost = 0;
+        let batteryLevel = 0;
+
+        // DOM Elements
+        const sessionTimerElement = document.getElementById('session-timer');
+        const currentCostElement = document.getElementById('current-cost');
+        const batteryLevelElement = document.getElementById('battery-level');
+        const endSessionBtn = document.getElementById('end-session-btn');
+        const modal = document.getElementById('confirmation-modal');
+        const confirmEnd = document.getElementById('confirm-end');
+        const dismissModal = document.getElementById('dismiss-modal');
+        const backArrow = document.querySelector('.back-arrow');
+
+        // Format time as HH:MM:SS
+        function formatTime(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Update session timer and cost
+        function updateSession() {
+            sessionSeconds++;
+            totalCost = sessionSeconds * costPerSecond;
+            
+            // Update timer display
+            sessionTimerElement.textContent = formatTime(sessionSeconds);
+            
+            // Update cost display
+            currentCostElement.textContent = `₹${totalCost.toFixed(2)}`;
+            
+            // Update battery level (simulating charging)
+            if (batteryLevel < 100) {
+                batteryLevel += 0.1; // Increment battery level
+                batteryLevelElement.style.height = `${batteryLevel}%`;
+            } else {
+                // Battery is fully charged
+                batteryLevel = 100;
+                batteryLevelElement.style.height = '100%';
+            }
+        }
+
+        // End session functionality
+        endSessionBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        dismissModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        confirmEnd.addEventListener('click', () => {
+            //alert(`Session ended. Total cost: ₹${totalCost.toFixed(2)}`);
+            modal.style.display = 'none';
+            // In a real app, this would stop the session and process payment
+            window.location.href="post.html"
+        });
+
+        // Back arrow functionality
+        backArrow.addEventListener('click', () => {
+            if (confirm('Are you sure you want to leave? Your charging session will continue in the background.')) {
+                // In a real app, this would navigate back while keeping the session active
+               // alert('Navigating back... Session is still active.');
+               window.location.href="active.html"
+            }
+        });
+
+        // Close modal if clicked outside
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Initialize the session updates
+        document.addEventListener('DOMContentLoaded', () => {
+            // Start with initial values
+            sessionTimerElement.textContent = formatTime(sessionSeconds);
+            currentCostElement.textContent = `₹${(sessionSeconds * costPerSecond).toFixed(2)}`;
+            
+            // Start the session updates
+            setInterval(updateSession, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Reservation - Cafe Aura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .back-arrow {
+            font-size: 24px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .header h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Spot Details Card */
+        .spot-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+        }
+
+        .spot-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .spot-address {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .booking-id {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* Countdown Timer */
+        .countdown-container {
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .countdown-label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .countdown-timer {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* QR Code Section */
+        .qr-section {
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .qr-code-placeholder {
+            width: 180px;
+            height: 180px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f0f0f0,
+                #f0f0f0 10px,
+                #e0e0e0 10px,
+                #e0e0e0 20px
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .qr-instructions {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Instructions Section */
+        .instructions {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .btn {
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .btn-secondary:hover {
+            background-color: #fff5f5;
+        }
+
+        /* Support Section */
+        .support {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .support-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .support-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-confirm {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .spot-name {
+                font-size: 20px;
+            }
+            
+            .countdown-timer {
+                font-size: 28px;
+            }
+            
+            .qr-code {
+                width: 180px;
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-arrow">←</div>
+            <h1>Your Reservation</h1>
+        </div>
+
+        <!-- Spot Details Card -->
+        <div class="spot-card">
+            <div class="spot-name">Cafe Aura</div>
+            <div class="spot-address">123 Main St</div>
+            <div class="booking-id">Booking ID: #XYZ123</div>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="countdown-container">
+            <div class="countdown-label">Session starts in:</div>
+            <div class="countdown-timer" id="countdown">00:15:30</div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="qr-section">
+            <div class="qr-code">
+                <div class="qr-code-placeholder">QR Code</div>
+            </div>
+            <div class="qr-instructions">Show this QR code to the host to start your session.</div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="instructions">
+            <strong>Instructions & Tips:</strong>
+            <ul>
+                <li>Arrive 5 minutes early</li>
+                <li>Ensure your device is ready</li>
+                <li>Keep your QR code accessible</li>
+                <li>Have a valid ID ready if required</li>
+            </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <div class="btn btn-secondary" id="cancel-btn">Cancel Booking</div>
+            <div class="btn btn-secondary" id="modify-btn">Modify Booking</div>
+        </div>
+
+        <!-- Support Section -->
+        <div class="support">
+            <a href="#" class="support-link">Need help? Contact Support</a>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <h2>Cancel Booking</h2>
+            <p>Are you sure you want to cancel your reservation at Cafe Aura?</p>
+            <div class="modal-buttons">
+                <button class="btn-confirm" id="confirm-cancel">Yes, Cancel</button>
+                <button class="btn-cancel" id="dismiss-modal">No, Keep It</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            // Set the initial time (15 minutes and 30 seconds)
+            let timeLeft = 15 * 60 + 30;
+            
+            const countdownElement = document.getElementById('countdown');
+            
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                
+                // Format the time with leading zeros
+                const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                countdownElement.textContent = formattedTime;
+                
+                // Decrease time by 1 second
+                timeLeft--;
+                
+                // Stop the timer when it reaches zero
+                if (timeLeft < 0) {
+                    clearInterval(timerInterval);
+                    countdownElement.textContent = "Session Started";
+                }
+            }
+            
+            // Update the timer immediately and then every second
+            updateTimer();
+            const timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Modal functionality
+        const cancelBtn = document.getElementById('cancel-btn');
+        const modal = document.getElementById('confirmation-modal');
+        const confirmCancel = document.getElementById('confirm-cancel');
+        const dismissModal = document.getElementById('dismiss-modal');
+
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        dismissModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        confirmCancel.addEventListener('click', () => {
+           // alert('Your booking has been cancelled.');
+            modal.style.display = 'none';
+            // In a real app, you would redirect or update the UI accordingly
+             window.location.href="home1.html"
+        });
+
+        // Modify booking button
+        const modifyBtn = document.getElementById('modify-btn');
+        modifyBtn.addEventListener('click', () => {
+           // alert('Redirecting to booking modification...');
+            // In a real app, this would navigate to the booking screen
+             window.location.href="reservations.html"
+        });
+
+        // Back arrow functionality
+        const backArrow = document.querySelector('.back-arrow');
+        backArrow.addEventListener('click', () => {
+           // alert('Going back...');
+            // In a real app, this would navigate back
+            window.location.href="booking.html"
+        });
+
+        // Initialize the countdown timer when the page loads
+        document.addEventListener('DOMContentLoaded', updateCountdown);
+    </script>
+</body>
+</html>
